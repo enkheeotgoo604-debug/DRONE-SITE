@@ -1,395 +1,789 @@
 <!DOCTYPE html>
-<html lang="mn">
+<html lang="mn" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Дээд Хараа — Агаарын зураг & бичлэгийн үйлчилгээ</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    colors: {
+                        darkBg: '#090d16',
+                        cardBg: '#111827',
+                        accentOrange: '#f59e0b',
+                        accentBlue: '#0ea5e9',
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        :root {
-            --bg-dark: #0d1117;
-            --card-bg: #161b22;
-            --accent-orange: #d97706;
-            --accent-blue: #38bdf8;
-            --text-main: #f3f4f6;
-            --text-muted: #9ca3af;
-            --border-color: #374151;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        }
-
         body {
-            background-color: var(--bg-dark);
-            color: var(--text-main);
-            line-height: 1.6;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #090d16;
+            color: #f3f4f6;
+            overflow-x: hidden;
+        }
+        
+        .glow-effect {
+            box-shadow: 0 0 50px -10px rgba(14, 165, 233, 0.15);
         }
 
-        /* Navigation */
-        nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1.5rem 5%;
-            background: rgba(13, 17, 23, 0.9);
-            position: fixed;
-            width: 100%;
-            top: 0;
-            z-index: 1000;
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid var(--border-color);
+        .glow-orange {
+            box-shadow: 0 0 40px -10px rgba(245, 158, 11, 0.2);
         }
 
-        .logo {
-            font-size: 1.2rem;
-            font-weight: 800;
-            letter-spacing: 2px;
+        .glass-nav {
+            background: rgba(9, 13, 22, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
         }
 
-        .logo span {
-            font-size: 0.8rem;
-            color: var(--accent-orange);
-            font-weight: normal;
+        .glass-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
         }
 
-        .nav-links {
-            display: flex;
-            list-style: none;
-            gap: 2rem;
-            align-items: center;
+        .glass-card:hover {
+            border-color: rgba(14, 165, 233, 0.4);
+            box-shadow: 0 10px 30px -10px rgba(14, 165, 233, 0.2);
         }
 
-        .nav-links a {
-            color: var(--text-main);
-            text-decoration: none;
-            transition: color 0.3s;
+        @keyframes floatSlow {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(2deg); }
         }
 
-        .nav-links a:hover {
-            color: var(--accent-blue);
+        .floating {
+            animation: floatSlow 6s ease-in-out infinite;
         }
 
-        .btn-cta {
-            background-color: transparent;
-            border: 1px solid var(--accent-orange);
-            color: var(--accent-orange);
-            padding: 0.5rem 1.2rem;
-            border-radius: 4px;
-            cursor: pointer;
-            text-decoration: none;
-            transition: 0.3s;
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 0.4; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.05); }
         }
 
-        .btn-cta:hover {
-            background-color: var(--accent-orange);
-            color: #fff;
-        }
-
-        /* Admin / Edit Mode Bar */
-        .admin-bar {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: #1f2937;
-            border: 1px solid var(--accent-orange);
-            padding: 10px 15px;
-            border-radius: 8px;
-            z-index: 2000;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-
-        .admin-btn {
-            background: var(--accent-orange);
-            color: white;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 0.85rem;
-        }
-
-        .admin-btn:hover {
-            opacity: 0.9;
-        }
-
-        [contenteditable="true"] {
-            outline: 2px dashed var(--accent-orange);
-            outline-offset: 4px;
-            background: rgba(217, 119, 6, 0.05);
-        }
-
-        /* Hero Section */
-        .hero {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 8rem 5% 4rem;
-            position: relative;
-            background: linear-gradient(180deg, rgba(13,17,23,0.7) 0%, rgba(13,17,23,1) 100%), #111827;
-        }
-
-        .hero-content {
-            max-width: 650px;
-            z-index: 2;
-        }
-
-        .hero-specs {
-            display: flex;
-            gap: 2rem;
-            margin-bottom: 2rem;
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            letter-spacing: 1px;
-        }
-
-        .hero-specs strong {
-            color: var(--accent-blue);
-            display: block;
-        }
-
-        .hero h1 {
-            font-size: 3.2rem;
-            line-height: 1.2;
-            margin-bottom: 1.5rem;
-            font-weight: 800;
-        }
-
-        .hero p {
-            font-size: 1.1rem;
-            color: var(--text-muted);
-            margin-bottom: 2rem;
-        }
-
-        /* Drone Visual Illustration Container */
-        .drone-visual {
-            position: relative;
-            width: 380px;
-            height: 380px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            animation: float 4s ease-in-out infinite;
-        }
-
-        .drone-visual img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 12px;
-            border: 1px solid var(--border-color);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-20px); }
-        }
-
-        /* Cards & Content Sections */
-        .section {
-            padding: 5rem 5%;
-        }
-
-        .section-title {
-            font-size: 2rem;
-            margin-bottom: 2.5rem;
-            border-left: 4px solid var(--accent-orange);
-            padding-left: 1rem;
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .card {
-            background-color: var(--card-bg);
-            padding: 1.5rem;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-
-        .card-img {
-            width: 100%;
-            height: 180px;
-            object-fit: cover;
-            border-radius: 6px;
-        }
-
-        .card h3 {
-            color: var(--accent-blue);
-        }
-
-        /* Mobile Menu Setup */
-        .menu-toggle {
-            display: none;
-            font-size: 1.8rem;
-            background: none;
-            border: none;
-            color: var(--text-main);
-            cursor: pointer;
-        }
-
-        @media (max-width: 768px) {
-            .nav-links {
-                display: none;
-                flex-direction: column;
-                position: absolute;
-                top: 100%;
-                left: 0;
-                width: 100%;
-                background: var(--bg-dark);
-                padding: 2rem;
-                border-bottom: 1px solid var(--border-color);
-            }
-
-            .nav-links.active {
-                display: flex;
-            }
-
-            .menu-toggle {
-                display: block;
-            }
-
-            .hero h1 {
-                font-size: 2.2rem;
-            }
-
-            .drone-visual {
-                display: none;
-            }
+        .pulse-blob {
+            animation: pulseGlow 8s ease-in-out infinite;
         }
     </style>
 </head>
-<body>
+<body class="bg-darkBg text-gray-100 antialiased selection:bg-sky-500 selection:text-white">
 
-    <!-- Header / Navigation -->
-    <nav>
-        <div class="logo">
-            ДЭЭД ХАРАА <br><span>AERIAL STUDIO · UB</span>
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 w-full z-50 glass-nav border-b border-gray-800/60 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <a href="#" class="flex items-center gap-3 group">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-sky-400 to-amber-500 flex items-center justify-center text-darkBg font-black text-xl shadow-lg shadow-sky-500/20 group-hover:scale-105 transition-transform">
+                    <i class="fa-solid fa-drone"></i>
+                </div>
+                <div>
+                    <span class="text-lg font-extrabold tracking-wider bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">ДЭЭД ХАРАА</span>
+                    <span class="block text-[10px] tracking-[0.25em] text-amber-400 font-semibold">AERIAL STUDIO · UB</span>
+                </div>
+            </a>
+
+            <!-- Desktop Links -->
+            <div class="hidden md:flex items-center gap-8 font-medium text-sm text-gray-300">
+                <a href="#about" class="hover:text-sky-400 transition-colors">Тухай</a>
+                <a href="#services" class="hover:text-sky-400 transition-colors">Үйлчилгээ</a>
+                <a href="#portfolio" class="hover:text-sky-400 transition-colors">Портфолио</a>
+                <a href="#pricing" class="hover:text-sky-400 transition-colors">Үнэ</a>
+                <a href="#testimonials" class="hover:text-sky-400 transition-colors">Сэтгэгдэл</a>
+            </div>
+
+            <div class="hidden md:flex items-center gap-4">
+                <a href="#contact" class="px-5 py-2.5 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 shadow-lg shadow-sky-500/25 transition-all transform hover:-translate-y-0.5">
+                    Захиалга өгөх
+                </a>
+            </div>
+
+            <!-- Mobile Menu Toggle -->
+            <button onclick="toggleMobileMenu()" class="md:hidden text-gray-200 text-2xl focus:outline-none p-2">
+                <i class="fa-solid fa-bars" id="menuIcon"></i>
+            </button>
         </div>
-        <button class="menu-toggle" onclick="toggleMenu()">☰</button>
-        <ul class="nav-links" id="navLinks">
-            <li><a href="#about">Тухай</a></li>
-            <li><a href="#services">Үйлчилгээ</a></li>
-            <li><a href="#portfolio">Ажлууд</a></li>
-            <li><a href="#pricing">Үнэ</a></li>
-            <li><a href="#contact" class="btn-cta">Захиалга өгөх</a></li>
-        </ul>
+
+        <!-- Mobile Menu Dropdown -->
+        <div id="mobileMenu" class="hidden md:hidden absolute top-20 left-0 w-full glass-nav border-b border-gray-800 py-6 px-6 flex flex-col gap-4 shadow-2xl">
+            <a href="#about" onclick="toggleMobileMenu()" class="text-lg font-medium text-gray-200 hover:text-sky-400">Тухай</a>
+            <a href="#services" onclick="toggleMobileMenu()" class="text-lg font-medium text-gray-200 hover:text-sky-400">Үйлчилгээ</a>
+            <a href="#portfolio" onclick="toggleMobileMenu()" class="text-lg font-medium text-gray-200 hover:text-sky-400">Портфолио</a>
+            <a href="#pricing" onclick="toggleMobileMenu()" class="text-lg font-medium text-gray-200 hover:text-sky-400">Үнэ</a>
+            <a href="#testimonials" onclick="toggleMobileMenu()" class="text-lg font-medium text-gray-200 hover:text-sky-400">Сэтгэгдэл</a>
+            <a href="#contact" onclick="toggleMobileMenu()" class="mt-2 text-center py-3 rounded-xl text-white bg-gradient-to-r from-sky-500 to-blue-600 font-semibold shadow-lg">Захиалга өгөх</a>
+        </div>
     </nav>
 
-    <!-- Admin / Edit Mode Control Bar -->
-    <div class="admin-bar">
-        <span style="font-size: 0.85rem; color: #9ca3af;" id="editStatus">Горим: Үзэх</span>
-        <button class="admin-btn" onclick="toggleEditMode()" id="editToggleBtn">✏️ Засах горим</button>
-        <button class="admin-btn" onclick="saveChanges()" style="background: #10b981; display:none;" id="saveBtn">💾 Хадгалах</button>
+    <!-- Hero Section -->
+    <header class="relative min-h-screen flex items-center pt-28 pb-16 px-6 overflow-hidden">
+        <!-- Background Glows -->
+        <div class="absolute top-1/4 left-1/10 w-96 h-96 bg-sky-500/15 rounded-full blur-3xl pointer-events-none pulse-blob"></div>
+        <div class="absolute bottom-1/4 right-1/10 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none pulse-blob" style="animation-delay: 3s;"></div>
+
+        <div class="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative z-10">
+            <!-- Hero Left Content -->
+            <div class="lg:col-span-7 space-y-8">
+                <div class="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-xs font-semibold uppercase tracking-widest text-sky-400">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                    Professional 4K / 5.4K Aerial Cinema
+                </div>
+
+                <h1 class="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight leading-[1.1]">
+                    Газраас <span class="bg-gradient-to-r from-sky-400 via-blue-400 to-amber-400 bg-clip-text text-transparent">120 метрийн</span> өндрөөс харагдах үнэн зураг
+                </h1>
+
+                <p class="text-lg sm:text-xl text-gray-400 max-w-2xl leading-relaxed">
+                    DJI Air 2S дэвшилтэт дроноор үл хөдлөх хөрөнгө, барилга байгууламж, томоохон арга хэмжээ болон байгалийн үзэсгэлэнт газруудыг кино урлагийн чанартайгаар мөнхөлнө.
+                </p>
+
+                <!-- Spec Badges -->
+                <div class="grid grid-cols-3 gap-4 pt-2">
+                    <div class="glass-card p-4 rounded-2xl border-l-2 border-sky-400">
+                        <span class="block text-[11px] uppercase tracking-wider text-gray-400 font-medium">Дрон төхөөрөмж</span>
+                        <span class="text-base sm:text-lg font-bold text-white">DJI Air 2S</span>
+                    </div>
+                    <div class="glass-card p-4 rounded-2xl border-l-2 border-amber-400">
+                        <span class="block text-[11px] uppercase tracking-wider text-gray-400 font-medium">Мэдрэгч / Формат</span>
+                        <span class="text-base sm:text-lg font-bold text-white">1" CMOS · 5.4K</span>
+                    </div>
+                    <div class="glass-card p-4 rounded-2xl border-l-2 border-emerald-400">
+                        <span class="block text-[11px] uppercase tracking-wider text-gray-400 font-medium">Байршил</span>
+                        <span class="text-base sm:text-lg font-bold text-white">Улаанбаатар, MN</span>
+                    </div>
+                </div>
+
+                <!-- CTA Buttons -->
+                <div class="flex flex-wrap items-center gap-4 pt-2">
+                    <a href="#contact" class="px-8 py-4 rounded-2xl font-bold text-white bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 shadow-xl shadow-amber-500/25 transition-all transform hover:-translate-y-1 flex items-center gap-3">
+                        <span>Шуурхай захиалах</span>
+                        <i class="fa-solid fa-arrow-right-long"></i>
+                    </a>
+                    <a href="#portfolio" class="px-8 py-4 rounded-2xl font-bold text-gray-200 glass-card hover:bg-white/10 transition-all flex items-center gap-3">
+                        <i class="fa-solid fa-play text-sky-400"></i>
+                        <span>Бичлэг үзэх</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Hero Right Visual (Cinematic Drone Graphic Card) -->
+            <div class="lg:col-span-5 flex justify-center">
+                <div class="relative w-full max-w-md aspect-square rounded-3xl glass-card p-8 flex flex-col items-center justify-center glow-effect overflow-hidden">
+                    <!-- Glowing Background Ring -->
+                    <div class="absolute inset-0 bg-gradient-to-tr from-sky-500/10 via-transparent to-amber-500/10 pointer-events-none"></div>
+                    
+                    <!-- Floating Drone Animation Icon -->
+                    <div class="floating relative z-10 w-48 h-48 rounded-3xl bg-gradient-to-br from-sky-500/20 to-blue-600/10 border border-sky-400/30 flex items-center justify-center shadow-2xl">
+                        <i class="fa-solid fa-drone text-7xl text-sky-400 drop-shadow-[0_0_20px_rgba(56,189,248,0.5)]"></i>
+                        <!-- Propeller spin accents -->
+                        <div class="absolute -top-3 -left-3 w-8 h-8 rounded-full border border-amber-400/60 animate-spin"></div>
+                        <div class="absolute -top-3 -right-3 w-8 h-8 rounded-full border border-amber-400/60 animate-spin" style="animation-direction: reverse;"></div>
+                        <div class="absolute -bottom-3 -left-3 w-8 h-8 rounded-full border border-amber-400/60 animate-spin" style="animation-direction: reverse;"></div>
+                        <div class="absolute -bottom-3 -right-3 w-8 h-8 rounded-full border border-amber-400/60 animate-spin"></div>
+                    </div>
+
+                    <div class="mt-8 text-center relative z-10">
+                        <div class="inline-block px-3 py-1 rounded-full bg-sky-500/10 text-sky-400 text-xs font-semibold mb-2">LIVE TELEMETRY ACTIVE</div>
+                        <h3 class="text-xl font-bold text-white">Агаарын өндөр түвшний хяналт</h3>
+                        <p class="text-xs text-gray-400 mt-1">Нислэгийн зөвшөөрөл болон аюулгүй ажиллагааны өндөр стандарт.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- About Section -->
+    <section id="about" class="py-24 px-6 relative">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                <div class="lg:col-span-6 space-y-6">
+                    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-xs font-semibold text-amber-400 uppercase tracking-widest">
+                        Бидний тухай
+                    </div>
+                    <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight">
+                        Улаанбаатар хотын хамгийн нарийвчлалтай <span class="text-sky-400">агаарын студи</span>
+                    </h2>
+                    <p class="text-gray-300 leading-relaxed">
+                        "Дээд Хараа" нь Улаанбаатар хот болон орон нутагт мэргэжлийн түвшний агаарын зураг авалт, видео бичлэг, 360 градусын панорама зураглал хийх чиглэлээр үйл ажиллагаа явуулдаг студи юм. Бид хамгийн сүүлийн үеийн DJI Air 2S төхөөрөмж болон мэргэжлийн өнгө найруулга (Color Grading)-аар таны бизнест үнэ цэн нэмнэ.
+                    </p>
+                    <div class="grid grid-cols-2 gap-6 pt-4">
+                        <div class="glass-card p-5 rounded-2xl">
+                            <div class="text-3xl font-extrabold text-amber-400 mb-1">500+</div>
+                            <div class="text-sm text-gray-400 font-medium">Амжилттай гүйцэтгэсэн нислэг</div>
+                        </div>
+                        <div class="glass-card p-5 rounded-2xl">
+                            <div class="text-3xl font-extrabold text-sky-400 mb-1">100%</div>
+                            <div class="text-sm text-gray-400 font-medium">Чанарын баталгаа & Сэтгэл ханамж</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-6 grid grid-cols-2 gap-4">
+                    <div class="space-y-4">
+                        <div class="glass-card p-6 rounded-3xl h-56 flex flex-col justify-end relative overflow-hidden group">
+                            <div class="absolute inset-0 bg-cover bg-center opacity-40 group-hover:scale-110 transition-transform duration-700" style="background-image: url('https://images.unsplash.com/photo-1527977966376-1c8408f9f108?auto=format&fit=crop&w=600&q=80')"></div>
+                            <div class="absolute inset-0 bg-gradient-to-t from-darkBg via-darkBg/40 to-transparent"></div>
+                            <div class="relative z-10">
+                                <h4 class="font-bold text-white text-lg">Үл хөдлөх хөрөнгө</h4>
+                                <p class="text-xs text-gray-300 mt-1">Байршил, орчны харагдац</p>
+                            </div>
+                        </div>
+                        <div class="glass-card p-6 rounded-3xl h-44 flex flex-col justify-end relative overflow-hidden group">
+                            <div class="absolute inset-0 bg-cover bg-center opacity-40 group-hover:scale-110 transition-transform duration-700" style="background-image: url('https://images.unsplash.com/photo-1541888946425-d0fbb18f764e?auto=format&fit=crop&w=600&q=80')"></div>
+                            <div class="absolute inset-0 bg-gradient-to-t from-darkBg via-darkBg/40 to-transparent"></div>
+                            <div class="relative z-10">
+                                <h4 class="font-bold text-white text-base">Барилгын явц</h4>
+                                <p class="text-xs text-gray-300">Үе шатны тайлан</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="space-y-4 pt-8">
+                        <div class="glass-card p-6 rounded-3xl h-44 flex flex-col justify-end relative overflow-hidden group">
+                            <div class="absolute inset-0 bg-cover bg-center opacity-40 group-hover:scale-110 transition-transform duration-700" style="background-image: url('https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=600&q=80')"></div>
+                            <div class="absolute inset-0 bg-gradient-to-t from-darkBg via-darkBg/40 to-transparent"></div>
+                            <div class="relative z-10">
+                                <h4 class="font-bold text-white text-base">Арга хэмжээ</h4>
+                                <p class="text-xs text-gray-300">Фестиваль, хурим</p>
+                            </div>
+                        </div>
+                        <div class="glass-card p-6 rounded-3xl h-56 flex flex-col justify-end relative overflow-hidden group">
+                            <div class="absolute inset-0 bg-cover bg-center opacity-40 group-hover:scale-110 transition-transform duration-700" style="background-image: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80')"></div>
+                            <div class="absolute inset-0 bg-gradient-to-t from-darkBg via-darkBg/40 to-transparent"></div>
+                            <div class="relative z-10">
+                                <h4 class="font-bold text-white text-lg">Байгаль & Аялал</h4>
+                                <p class="text-xs text-gray-300 mt-1">Кино контент зураглал</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="py-24 px-6 bg-cardBg/40 border-y border-gray-800/60 relative">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center max-w-3xl mx-auto mb-16 space-y-4">
+                <span class="px-4 py-1.5 rounded-full bg-sky-500/10 border border-sky-500/25 text-xs font-semibold text-sky-400 uppercase tracking-widest">Үйлчилгээний төрлүүд</span>
+                <h2 class="text-3xl sm:text-5xl font-extrabold tracking-tight">Таны хэрэгцээнд тохирсон агаарын шийдэл</h2>
+                <p class="text-gray-400 text-base sm:text-lg">Бид мэргэжлийн түвшинд төрөл бүрийн объект болон арга хэмжээнд зориулсан дроны үйлчилгээ үзүүлж байна.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Service 1 -->
+                <div class="glass-card p-8 rounded-3xl relative group hover:-translate-y-2 transition-all duration-300">
+                    <div class="w-14 h-14 rounded-2xl bg-sky-500/10 border border-sky-500/30 flex items-center justify-center text-sky-400 text-2xl mb-6 group-hover:bg-sky-500 group-hover:text-darkBg transition-colors">
+                        <i class="fa-solid fa-house-chimney"></i>
+                    </div>
+                    <span class="text-xs font-bold text-amber-400 tracking-wider uppercase">01. ҮЛ ХӨДЛӨХ ХӨРӨНГӨ</span>
+                    <h3 class="text-xl font-bold text-white mt-2 mb-3">Зар болон сурталчилгаа</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">
+                        Байшин, орон сууц, хаус болон газрын талбайг худалдах, түрээслэхэд зориулж орчны үнэлэмж, хил заагийг тод харуулсан 4K зураг, видео бэлтгэнэ.
+                    </p>
+                    <ul class="mt-6 space-y-2.5 text-xs text-gray-300">
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-sky-400"></i> Орчны панорама харагдац</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-sky-400"></i> Өндөр нарийвчлалтай HDR зураг</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-sky-400"></i> Монтажтай видео клип</li>
+                    </ul>
+                </div>
+
+                <!-- Service 2 -->
+                <div class="glass-card p-8 rounded-3xl relative group hover:-translate-y-2 transition-all duration-300 border-sky-500/30">
+                    <div class="absolute -top-3 right-8 px-3 py-1 rounded-full bg-gradient-to-r from-sky-500 to-blue-600 text-[10px] font-bold text-white uppercase tracking-wider">Эрэлттэй</div>
+                    <div class="w-14 h-14 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 text-2xl mb-6 group-hover:bg-amber-500 group-hover:text-darkBg transition-colors">
+                        <i class="fa-solid fa-helmet-safety"></i>
+                    </div>
+                    <span class="text-xs font-bold text-amber-400 tracking-wider uppercase">02. БАРИЛГЫН ЯВЦ</span>
+                    <h3 class="text-xl font-bold text-white mt-2 mb-3">Явцын баримтжуулалт</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">
+                        Барилга байгууламжийн угсралтын ажлын үе шат, явцыг тогтмол цаг хугацаанд нь агаараас баримтжуулж хөрөнгө оруулагчид болон тайланд зориулна.
+                    </p>
+                    <ul class="mt-6 space-y-2.5 text-xs text-gray-300">
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-sky-400"></i> Сар бүрийн тогтмол нислэг</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-sky-400"></i> Өндөр нарийвчлалтай видео архивлалт</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-sky-400"></i> Инженерийн тайланд зориулсан өнцөг</li>
+                    </ul>
+                </div>
+
+                <!-- Service 3 -->
+                <div class="glass-card p-8 rounded-3xl relative group hover:-translate-y-2 transition-all duration-300">
+                    <div class="w-14 h-14 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 text-2xl mb-6 group-hover:bg-emerald-500 group-hover:text-darkBg transition-colors">
+                        <i class="fa-solid fa-camera-retro"></i>
+                    </div>
+                    <span class="text-xs font-bold text-amber-400 tracking-wider uppercase">03. АРГА ХЭМЖЭЭ & КИНО</span>
+                    <h3 class="text-xl font-bold text-white mt-2 mb-3">Фестиваль болон хурим</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">
+                        Хурим, спорт арга хэмжээ, фестивалиудыг агаарын гайхалтай өнцгөөс бодитоор буулгаж, кино урлагийн чанартай контент үйлдвэрлэнэ.
+                    </p>
+                    <ul class="mt-6 space-y-2.5 text-xs text-gray-300">
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-sky-400"></i> Шууд эфирийн дэмжлэг</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-sky-400"></i> Кино чанарын Slow-motion</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-sky-400"></i> Мэргэжлийн өнгө найруулга</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Portfolio Section -->
+    <section id="portfolio" class="py-24 px-6 relative">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
+                <div class="space-y-4">
+                    <span class="px-4 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/25 text-xs font-semibold text-amber-400 uppercase tracking-widest">Портфолио</span>
+                    <h2 class="text-3xl sm:text-5xl font-extrabold tracking-tight">Бидний гүйцэтгэсэн ажлууд</h2>
+                    <p class="text-gray-400">Агаарын зураг болон видео бичлэгийн дээжээс сонирхоно уу.</p>
+                </div>
+                <!-- Filter Tabs -->
+                <div class="flex flex-wrap gap-2 bg-cardBg p-1.5 rounded-2xl border border-gray-800">
+                    <button onclick="filterPortfolio('all')" id="btn-all" class="px-5 py-2.5 rounded-xl text-xs font-bold transition-all bg-sky-500 text-white shadow-lg">Бүгд</button>
+                    <button onclick="filterPortfolio('realestate')" id="btn-realestate" class="px-5 py-2.5 rounded-xl text-xs font-bold transition-all text-gray-400 hover:text-white">Үл хөдлөх</button>
+                    <button onclick="filterPortfolio('construction')" id="btn-construction" class="px-5 py-2.5 rounded-xl text-xs font-bold transition-all text-gray-400 hover:text-white">Барилга</button>
+                    <button onclick="filterPortfolio('nature')" id="btn-nature" class="px-5 py-2.5 rounded-xl text-xs font-bold transition-all text-gray-400 hover:text-white">Байгаль</button>
+                </div>
+            </div>
+
+            <!-- Portfolio Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="portfolioGrid">
+                <!-- Item 1 -->
+                <div class="portfolio-item glass-card rounded-3xl overflow-hidden group cursor-pointer" data-category="realestate" onclick="openPortfolioModal('Зайсангийн Люкс Хаус Комплекс', 'Улаанбаатар хотын үнэтэй бүсэд байрлах тансаг зэрэглэлийн хаус хотхоныг 5.4K өндөр нарийвчлалтайгаар агаараас буулгасан нь.', 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1000&q=80', 'Үл хөдлөх хөрөнгө')">
+                    <div class="relative h-64 overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80" alt="Zaisan House" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" onerror="this.src='https://placehold.co/800x600/111827/38bdf8?text=Image+Unavailable'">
+                        <div class="absolute inset-0 bg-gradient-to-t from-darkBg via-transparent to-transparent opacity-80"></div>
+                        <span class="absolute top-4 left-4 px-3 py-1 rounded-full bg-darkBg/80 backdrop-blur-md text-[11px] font-semibold text-sky-400 border border-white/10">Үл хөдлөх</span>
+                        <div class="absolute bottom-4 left-4 right-4 flex items-center justify-between">
+                            <h4 class="font-bold text-lg text-white">Зайсангийн Люкс Хаус Комплекс</h4>
+                            <span class="w-9 h-9 rounded-full bg-sky-500/20 backdrop-blur-md border border-sky-400/40 flex items-center justify-center text-sky-400 group-hover:bg-sky-500 group-hover:text-darkBg transition-all"><i class="fa-solid fa-arrow-right"></i></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Item 2 -->
+                <div class="portfolio-item glass-card rounded-3xl overflow-hidden group cursor-pointer" data-category="construction" onclick="openPortfolioModal('СБД-ийн шинэ Барилгын цогцолбор', 'Барилгын суурь цутгалт болон каркас угсралтын ажлын явцыг сар бүр тогтмол нислэгээр баримтжуулсан төсөл.', 'https://images.unsplash.com/photo-1541888946425-d0fbb18f764e?auto=format&fit=crop&w=1000&q=80', 'Барилга')">
+                    <div class="relative h-64 overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1541888946425-d0fbb18f764e?auto=format&fit=crop&w=800&q=80" alt="Construction Progress" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" onerror="this.src='https://placehold.co/800x600/111827/38bdf8?text=Image+Unavailable'">
+                        <div class="absolute inset-0 bg-gradient-to-t from-darkBg via-transparent to-transparent opacity-80"></div>
+                        <span class="absolute top-4 left-4 px-3 py-1 rounded-full bg-darkBg/80 backdrop-blur-md text-[11px] font-semibold text-amber-400 border border-white/10">Барилга</span>
+                        <div class="absolute bottom-4 left-4 right-4 flex items-center justify-between">
+                            <h4 class="font-bold text-lg text-white">СБД-ийн шинэ Барилгын цогцолбор</h4>
+                            <span class="w-9 h-9 rounded-full bg-sky-500/20 backdrop-blur-md border border-sky-400/40 flex items-center justify-center text-sky-400 group-hover:bg-sky-500 group-hover:text-darkBg transition-all"><i class="fa-solid fa-arrow-right"></i></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Item 3 -->
+                <div class="portfolio-item glass-card rounded-3xl overflow-hidden group cursor-pointer" data-category="nature" onclick="openPortfolioModal('Тэрэлжийн байгалийн цогцолбор газар', 'Монгол орны байгалийн үзэсгэлэнт тогтоц, өглөөний манан дундуурх дроны гайхалтай кинематографик бичлэг.', 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1000&q=80', 'Байгаль')">
+                    <div class="relative h-64 overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80" alt="Terelj Nature" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" onerror="this.src='https://placehold.co/800x600/111827/38bdf8?text=Image+Unavailable'">
+                        <div class="absolute inset-0 bg-gradient-to-t from-darkBg via-transparent to-transparent opacity-80"></div>
+                        <span class="absolute top-4 left-4 px-3 py-1 rounded-full bg-darkBg/80 backdrop-blur-md text-[11px] font-semibold text-emerald-400 border border-white/10">Байгаль</span>
+                        <div class="absolute bottom-4 left-4 right-4 flex items-center justify-between">
+                            <h4 class="font-bold text-lg text-white">Тэрэлжийн байгалийн цогцолбор газар</h4>
+                            <span class="w-9 h-9 rounded-full bg-sky-500/20 backdrop-blur-md border border-sky-400/40 flex items-center justify-center text-sky-400 group-hover:bg-sky-500 group-hover:text-darkBg transition-all"><i class="fa-solid fa-arrow-right"></i></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Item 4 -->
+                <div class="portfolio-item glass-card rounded-3xl overflow-hidden group cursor-pointer" data-category="realestate" onclick="openPortfolioModal('Яармагийн Орон сууцны хороолол', 'Шинэ блокуудын байршил, авто зогсоол болон хүүхдийн тоглоомын талбайн тохижилтыг агаараас харуулсан сурталчилгаа.', 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1000&q=80', 'Үл хөдлөх хөрөнгө')">
+                    <div class="relative h-64 overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80" alt="Yarmag Apartments" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" onerror="this.src='https://placehold.co/800x600/111827/38bdf8?text=Image+Unavailable'">
+                        <div class="absolute inset-0 bg-gradient-to-t from-darkBg via-transparent to-transparent opacity-80"></div>
+                        <span class="absolute top-4 left-4 px-3 py-1 rounded-full bg-darkBg/80 backdrop-blur-md text-[11px] font-semibold text-sky-400 border border-white/10">Үл хөдлөх</span>
+                        <div class="absolute bottom-4 left-4 right-4 flex items-center justify-between">
+                            <h4 class="font-bold text-lg text-white">Яармагийн Орон сууцны хороолол</h4>
+                            <span class="w-9 h-9 rounded-full bg-sky-500/20 backdrop-blur-md border border-sky-400/40 flex items-center justify-center text-sky-400 group-hover:bg-sky-500 group-hover:text-darkBg transition-all"><i class="fa-solid fa-arrow-right"></i></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Item 5 -->
+                <div class="portfolio-item glass-card rounded-3xl overflow-hidden group cursor-pointer" data-category="nature" onclick="openPortfolioModal('Хөвсгөл нуур - Мөсний баяр', 'Өвлийн улирлын алдарт Мөсний баярын үйл ажиллагааг агаарын өндөр өнцгөөс цогцоор нь бичсэн контент.', 'https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=1000&q=80', 'Байгаль')">
+                    <div class="relative h-64 overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=800&q=80" alt="Khuvsgul Lake" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" onerror="this.src='https://placehold.co/800x600/111827/38bdf8?text=Image+Unavailable'">
+                        <div class="absolute inset-0 bg-gradient-to-t from-darkBg via-transparent to-transparent opacity-80"></div>
+                        <span class="absolute top-4 left-4 px-3 py-1 rounded-full bg-darkBg/80 backdrop-blur-md text-[11px] font-semibold text-emerald-400 border border-white/10">Байгаль</span>
+                        <div class="absolute bottom-4 left-4 right-4 flex items-center justify-between">
+                            <h4 class="font-bold text-lg text-white">Хөвсгөл нуур - Мөсний баяр</h4>
+                            <span class="w-9 h-9 rounded-full bg-sky-500/20 backdrop-blur-md border border-sky-400/40 flex items-center justify-center text-sky-400 group-hover:bg-sky-500 group-hover:text-darkBg transition-all"><i class="fa-solid fa-arrow-right"></i></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Item 6 -->
+                <div class="portfolio-item glass-card rounded-3xl overflow-hidden group cursor-pointer" data-category="construction" onclick="openPortfolioModal('Зам гүүрийн дэд бүтцийн төсөл', 'Улаанбаатар хот орчмын авто замын шинэчлэл болон гүүр барилгын ажлын инженерийн мониторинг зураглал.', 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1000&q=80', 'Барилга')">
+                    <div class="relative h-64 overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=800&q=80" alt="Bridge Construction" class="w-full h-`full object-cover group-hover:scale-110 transition-transform duration-700" onerror="this.src='https://placehold.co/800x600/111827/38bdf8?text=Image+Unavailable'">
+                        <div class="absolute inset-0 bg-gradient-to-t from-darkBg via-transparent to-transparent opacity-80"></div>
+                        <span class="absolute top-4 left-4 px-3 py-1 rounded-full bg-darkBg/80 backdrop-blur-md text-[11px] font-semibold text-amber-400 border border-white/10">Барилга</span>
+                        <div class="absolute bottom-4 left-4 right-4 flex items-center justify-between">
+                            <h4 class="font-bold text-lg text-white">Зам гүүрийн дэд бүтцийн төсөл</h4>
+                            <span class="w-9 h-9 rounded-full bg-sky-500/20 backdrop-blur-md border border-sky-400/40 flex items-center justify-center text-sky-400 group-hover:bg-sky-500 group-hover:text-darkBg transition-all"><i class="fa-solid fa-arrow-right"></i></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="pricing" class="py-24 px-6 bg-cardBg/40 border-y border-gray-800/60 relative">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center max-w-3xl mx-auto mb-16 space-y-4">
+                <span class="px-4 py-1.5 rounded-full bg-sky-500/10 border border-sky-500/25 text-xs font-semibold text-sky-400 uppercase tracking-widest">Үнийн санал</span>
+                <h2 class="text-3xl sm:text-5xl font-extrabold tracking-tight">Танд тохирох багцыг сонгоно уу</h2>
+                <p class="text-gray-400 text-base sm:text-lg">Чанар болон хурдыг эрхэмлэдэг бидний үнийн бодлого.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
+                <!-- Plan 1 -->
+                <div class="glass-card p-8 rounded-3xl flex flex-col justify-between relative">
+                    <div>
+                        <div class="text-sm font-bold text-sky-400 uppercase tracking-wider mb-2">Стандарт багц</div>
+                        <h3 class="text-2xl font-extrabold text-white mb-4">Нэг удаагийн нислэг</h3>
+                        <p class="text-gray-400 text-sm mb-6">Жижиг орон сууц, хаус болон жижиг хэмжээний объектын зар болон үзүүлэлтүүдэд зориулагдсан.</p>
+                        <div class="text-3xl sm:text-4xl font-extrabold text-white mb-6">₮350,000 <span class="text-xs font-normal text-gray-400">/ обьект</span></div>
+                        <ul class="space-y-3.5 text-sm text-gray-300">
+                            <li class="flex items-center gap-3"><i class="fa-solid fa-check text-sky-400"></i> 15-20 ширхэг өндөр чанарын зураг</li>
+                            <li class="flex items-center gap-3"><i class="fa-solid fa-check text-sky-400"></i> 1 минут хүртэлх монтажтай видео</li>
+                            <li class="flex items-center gap-3"><i class="fa-solid fa-check text-sky-400"></i> Өнгөний стандарт найруулга</li>
+                            <li class="flex items-center gap-3"><i class="fa-solid fa-check text-sky-400"></i> 24 цагийн дотор хүлээлгэн өгөх</li>
+                        </ul>
+                    </div>
+                    <div class="mt-8">
+                        <a href="#contact" class="block w-full py-3.5 text-center rounded-2xl font-bold text-white bg-white/10 hover:bg-white/20 transition-all">Энэ багцыг сонгох</a>
+                    </div>
+                </div>
+
+                <!-- Plan 2 (Featured / Glowing) -->
+                <div class="glass-card p-8 rounded-3xl flex flex-col justify-between relative glow-orange border-amber-500/50 bg-gradient-to-b from-amber-500/10 via-transparent to-transparent">
+                    <div class="absolute -top-3.5 left-1/2 transform -translate-x-1/2 px-4 py-1 rounded-full bg-gradient-to-r from-amber-500 to-orange-600 text-xs font-bold text-white uppercase tracking-wider shadow-lg">Хамгийн эрэлттэй</div>
+                    <div>
+                        <div class="text-sm font-bold text-amber-400 uppercase tracking-wider mb-2">Презентаци багц</div>
+                        <h3 class="text-2xl font-extrabold text-white mb-4">Бизнес & Компани</h3>
+                        <p class="text-gray-400 text-sm mb-6">Барилга угсралтын явц, томоохон арга хэмжээ болон компани сурталчилгааны контент.</p>
+                        <div class="text-3xl sm:text-4xl font-extrabold text-white mb-6">₮750,000 <span class="text-xs font-normal text-gray-400">/ төсөл</span></div>
+                        <ul class="space-y-3.5 text-sm text-gray-300">
+                            <li class="flex items-center gap-3"><i class="fa-solid fa-check text-amber-400"></i> 40+ ширхэг 5.4K HDR зураг</li>
+                            <li class="flex items-center gap-3"><i class="fa-solid fa-check text-amber-400"></i> 3 минут хүртэлх киномузик монтаж</li>
+                            <li class="flex items-center gap-3"><i class="fa-solid fa-check text-amber-400"></i> Кино урлагийн зэрэглэлийн Color Grading</li>
+                            <li class="flex items-center gap-3"><i class="fa-solid fa-check text-amber-400"></i> 360 панорама зураглал багтсан</li>
+                        </ul>
+                    </div>
+                    <div class="mt-8">
+                        <a href="#contact" class="block w-full py-3.5 text-center rounded-2xl font-bold text-white bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 shadow-lg shadow-amber-500/25 transition-all">Энэ багцыг сонгох</a>
+                    </div>
+                </div>
+
+                <!-- Plan 3 -->
+                <div class="glass-card p-8 rounded-3xl flex flex-col justify-between relative">
+                    <div>
+                        <div class="text-sm font-bold text-sky-400 uppercase tracking-wider mb-2">Байгууллагын гэрээ</div>
+                        <h3 class="text-2xl font-extrabold text-white mb-4">Урт хугацааны хамтын ажиллагаа</h3>
+                        <p class="text-gray-400 text-sm mb-6">Барилга байгууламж, том бүтээн байгуулалтын сар бүрийн тогтмол нислэг болон тайлан.</p>
+                        <div class="text-3xl sm:text-4xl font-extrabold text-white mb-6">Тохиролцоно <span class="text-xs font-normal text-gray-400">/ гэрээгээр</span></div>
+                        <ul class="space-y-3.5 text-sm text-gray-300">
+                            <li class="flex items-center gap-3"><i class="fa-solid fa-check text-sky-400"></i> Сар бүрийн тогтмол нислэгүүд</li>
+                            <li class="flex items-center gap-3"><i class="fa-solid fa-check text-sky-400"></i> Бүх төрлийн 5.4K RAW контент</li>
+                            <li class="flex items-center gap-3"><i class="fa-solid fa-check text-sky-400"></i> Нислэгийн тусгай зөвшөөрлийн зохицуулалт</li>
+                            <li class="flex items-center gap-3"><i class="fa-solid fa-check text-sky-400"></i> VIP үйлчилгээ & шуурхай баг</li>
+                        </ul>
+                    </div>
+                    <div class="mt-8">
+                        <a href="#contact" class="block w-full py-3.5 text-center rounded-2xl font-bold text-white bg-white/10 hover:bg-white/20 transition-all">Холбогдох</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section id="testimonials" class="py-24 px-6 relative">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center max-w-3xl mx-auto mb-16 space-y-4">
+                <span class="px-4 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/25 text-xs font-semibold text-amber-400 uppercase tracking-widest">Харилцагчдын сэтгэгдэл</span>
+                <h2 class="text-3xl sm:text-5xl font-extrabold tracking-tight">Үйлчлүүлэгчдийн үнэлгээ</h2>
+                <p class="text-gray-400 text-base sm:text-lg">Бидэнтэй хамтран ажилласан байгууллага, хувь хүмүүсийн сэтгэгдэл.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Testimonial 1 -->
+                <div class="glass-card p-8 rounded-3xl flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center gap-1 text-amber-400 mb-4 text-sm">
+                            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                        </div>
+                        <p class="text-gray-300 text-sm leading-relaxed italic mb-6">
+                            "Зайсан дахь хаус хотхоныг борлуулахад агаарын зураг маш том үүрэг гүйцэтгэсэн. 'Дээд Хараа' студийн хамт олон маш богино хугацаанд мэргэжлийн түвшинд гүйцэтгэж өгсөнд баярлалаа."
+                        </p>
+                    </div>
+                    <div class="flex items-center gap-4 pt-4 border-t border-gray-800">
+                        <div class="w-12 h-12 rounded-full bg-gradient-to-br from-sky-400 to-blue-600 flex items-center justify-center font-bold text-white text-lg">БЗ</div>
+                        <div>
+                            <h4 class="font-bold text-white text-sm">Б. Золбоо</h4>
+                            <span class="text-xs text-gray-400">Үл хөдлөх хөрөнгийн агент</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Testimonial 2 -->
+                <div class="glass-card p-8 rounded-3xl flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center gap-1 text-amber-400 mb-4 text-sm">
+                            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                        </div>
+                        <p class="text-gray-300 text-sm leading-relaxed italic mb-6">
+                            "Барилгын явцын тайланг сар бүр агаараас авч хөрөнгө оруулагчиддаа танилцуулдаг. Маш нямбай, чанартай ажилладаг хамт олон байна. Итгэлтэй түнш."
+                        </p>
+                    </div>
+                    <div class="flex items-center gap-4 pt-4 border-t border-gray-800">
+                        <div class="w-12 h-12 rounded-full bg-gradient-to-br from-amber-400 to-orange-600 flex items-center justify-center font-bold text-white text-lg">ХЭ</div>
+                        <div>
+                            <h4 class="font-bold text-white text-sm">Х. Эрдэнэбат</h4>
+                            <span class="text-xs text-gray-400">Ерөнхий инженер, Барилгын компани</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Testimonial 3 -->
+                <div class="glass-card p-8 rounded-3xl flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center gap-1 text-amber-400 mb-4 text-sm">
+                            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                        </div>
+                        <p class="text-gray-300 text-sm leading-relaxed italic mb-6">
+                            "Фестивалийн үеэр авсан агаарын бичлэгүүд үнэхээр кино шиг болсон байсан. Өнгө найруулга болон дроны жолоодлого маш цэгцтэй. Дахин хамтрах болно."
+                        </p>
+                    </div>
+                    <div class="flex items-center gap-4 pt-4 border-t border-gray-800">
+                        <div class="w-12 h-12 rounded-full bg-gradient-to-br from-emerald-400 to-teal-600 flex items-center justify-center font-bold text-white text-lg">ОД</div>
+                        <div>
+                            <h4 class="font-bold text-white text-sm">О. Дөлгөөн</h4>
+                            <span class="text-xs text-gray-400">Арга хэмжээ зохион байгуулагч</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Booking / Contact Section -->
+    <section id="contact" class="py-24 px-6 bg-cardBg/40 border-t border-gray-800/60 relative">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                <!-- Left Details -->
+                <div class="lg:col-span-5 space-y-6">
+                    <span class="px-4 py-1.5 rounded-full bg-sky-500/10 border border-sky-500/25 text-xs font-semibold text-sky-400 uppercase tracking-widest">Холбоо барих</span>
+                    <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight">Захиалга өгөх болон зөвлөгөө авах</h2>
+                    <p class="text-gray-400 leading-relaxed">
+                        Та өөрийн хүссэн объект, хугацаа болон байршлыг доорх маягтаар илгээх эсвэл шууд утсаар холбогдоно уу. Бид шуурхай хариу өгөх болно.
+                    </p>
+
+                    <div class="space-y-4 pt-4">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-2xl bg-sky-500/10 border border-sky-500/30 flex items-center justify-center text-sky-400 text-lg">
+                                <i class="fa-solid fa-phone"></i>
+                            </div>
+                            <div>
+                                <span class="block text-xs text-gray-400 font-medium">Утасны дугаар</span>
+                                <a href="tel:+97699119911" class="text-base font-bold text-white hover:text-sky-400 transition-colors">+976 9911-9911</a>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 text-lg">
+                                <i class="fa-solid fa-envelope"></i>
+                            </div>
+                            <div>
+                                <span class="block text-xs text-gray-400 font-medium">И-мэйл хаяг</span>
+                                <a href="mailto:info@deedharaa.mn" class="text-base font-bold text-white hover:text-sky-400 transition-colors">info@deedharaa.mn</a>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 text-lg">
+                                <i class="fa-solid fa-location-dot"></i>
+                            </div>
+                            <div>
+                                <span class="block text-xs text-gray-400 font-medium">Байршил</span>
+                                <span class="text-base font-bold text-white">Улаанбаатар хот, Монгол улс</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Form -->
+                <div class="lg:col-span-7">
+                    <div class="glass-card p-8 sm:p-10 rounded-3xl relative glow-effect">
+                        <h3 class="text-2xl font-bold text-white mb-6">Шуурхай захиалгын маягт</h3>
+                        <form onsubmit="handleBooking(event)" class="space-y-6">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                <div class="space-y-2">
+                                    <label class="block text-xs font-semibold uppercase tracking-wider text-gray-300">Таны нэр</label>
+                                    <input type="text" id="clientName" required placeholder="Жишээ: Төмөр" class="w-full bg-darkBg border border-gray-800 rounded-xl px-4 py-3.5 text-sm text-white focus:outline-none focus:border-sky-400 transition-colors">
+                                </div>
+                                <div class="space-y-2">
+                                    <label class="block text-xs font-semibold uppercase tracking-wider text-gray-300">Утасны дугаар</label>
+                                    <input type="tel" id="clientPhone" required placeholder="Жишээ: 99887766" class="w-full bg-darkBg border border-gray-800 rounded-xl px-4 py-3.5 text-sm text-white focus:outline-none focus:border-sky-400 transition-colors">
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                <div class="space-y-2">
+                                    <label class="block text-xs font-semibold uppercase tracking-wider text-gray-300">Үйлчилгээний төрөл</label>
+                                    <select id="clientService" class="w-full bg-darkBg border border-gray-800 rounded-xl px-4 py-3.5 text-sm text-white focus:outline-none focus:border-sky-400 transition-colors">
+                                        <option value="realestate">Үл хөдлөх хөрөнгийн зар</option>
+                                        <option value="construction">Барилгын явц баримтжуулалт</option>
+                                        <option value="event">Арга хэмжээ & Фестиваль</option>
+                                        <option value="other">Бусад тусгай захиалга</option>
+                                    </select>
+                                </div>
+                                <div class="space-y-2">
+                                    <label class="block text-xs font-semibold uppercase tracking-wider text-gray-300">Товлосон огноо</label>
+                                    <input type="date" id="clientDate" required class="w-full bg-darkBg border border-gray-800 rounded-xl px-4 py-3.5 text-sm text-white focus:outline-none focus:border-sky-400 transition-colors">
+                                </div>
+                            </div>
+
+                            <div class="space-y-2">
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-gray-300">Дэлгэрэнгүй мэдээлэл (Объектын байршил гэх мэт)</label>
+                                <textarea id="clientNotes" rows="4" placeholder="Та захиалгын талаар дэлгэрэнгүй бичнэ үү..." class="w-full bg-darkBg border border-gray-800 rounded-xl px-4 py-3.5 text-sm text-white focus:outline-none focus:border-sky-400 transition-colors"></textarea>
+                            </div>
+
+                            <button type="submit" class="w-full py-4 rounded-xl font-bold text-white bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 shadow-xl shadow-sky-500/25 transition-all transform hover:-translate-y-0.5">
+                                Захиалга илгээх
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-12 px-6 border-t border-gray-800/60 bg-darkBg">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-sky-400 to-amber-500 flex items-center justify-center text-darkBg font-bold text-sm">
+                    <i class="fa-solid fa-drone"></i>
+                </div>
+                <span class="font-bold tracking-wider text-white">ДЭЭД ХАРАА AERIAL STUDIO</span>
+            </div>
+            <p class="text-xs text-gray-400 text-center">© 2026 Дээд Хараа Студи. Бүх эрх хуулиар хамгаалагдсан.</p>
+            <div class="flex items-center gap-4 text-gray-400">
+                <a href="#" class="w-10 h-10 rounded-xl glass-card flex items-center justify-center hover:text-sky-400 transition-colors"><i class="fa-brands fa-facebook-f"></i></a>
+                <a href="#" class="w-10 h-10 rounded-xl glass-card flex items-center justify-center hover:text-sky-400 transition-colors"><i class="fa-brands fa-instagram"></i></a>
+                <a href="#" class="w-10 h-10 rounded-xl glass-card flex items-center justify-center hover:text-sky-400 transition-colors"><i class="fa-brands fa-youtube"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Portfolio Detail Modal -->
+    <div id="portfolioModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+        <div class="glass-card max-w-xl w-full p-8 rounded-3xl relative border border-gray-700 shadow-2xl animate-in fade-in zoom-in duration-200">
+            <button onclick="closePortfolioModal()" class="absolute top-6 right-6 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <span id="modalCategory" class="inline-block px-3 py-1 rounded-full bg-sky-500/20 text-sky-400 text-xs font-semibold mb-4">Ангилал</span>
+            <h3 id="modalTitle" class="text-2xl font-bold text-white mb-4">Гарчиг</h3>
+            <div class="rounded-2xl overflow-hidden mb-6 h-64">
+                <img id="modalImg" src="" alt="Portfolio Image" class="w-full h-full object-cover">
+            </div>
+            <p id="modalDesc" class="text-gray-300 text-sm leading-relaxed mb-6">Дэлгэрэнгүй тайлбар...</p>
+            <button onclick="closePortfolioModal()" class="w-full py-3.5 rounded-xl font-bold text-white bg-gradient-to-r from-sky-500 to-blue-600">Хаах</button>
+        </div>
     </div>
 
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="hero-content">
-            <div class="hero-specs">
-                <div>DRONE <strong>DJI Air 2S</strong></div>
-                <div>SENSOR <strong>1" CMOS · 5.4K</strong></div>
-                <div>LOCATION <strong>Улаанбаатар, MN</strong></div>
+    <!-- Booking Success Notification Modal -->
+    <div id="successModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+        <div class="glass-card max-w-md w-full p-8 rounded-3xl text-center relative border border-gray-700 shadow-2xl">
+            <div class="w-16 h-16 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 text-3xl flex items-center justify-center mx-auto mb-6">
+                <i class="fa-solid fa-check"></i>
             </div>
-            <h1 contenteditable="false" data-editable="hero-title">Газраас 120 метрийн өндрөөс харагдах үнэн зураг</h1>
-            <p contenteditable="false" data-editable="hero-desc">DJI Air 2S дроноор үл хөдлөх хөрөнгө, барилга байгууламж, арга хэмжээ, байгалийн үзэсгэлэнт газрыг агаараас нарийвчлалтай зураг, видео болгон буулгана.</p>
-            <a href="#contact" class="btn-cta" style="background: var(--accent-orange); color: #fff; padding: 0.8rem 1.8rem; display:inline-block;">Захиалга өгөх</a>
+            <h3 class="text-2xl font-bold text-white mb-2">Захиалга амжилттай илгээгдлээ!</h3>
+            <p class="text-gray-300 text-sm mb-6">Таны хүсэлтийг хүлээн авлаа. Бидний хамт олон тун удахгүй тантай холбогдох болно.</p>
+            <button onclick="closeSuccessModal()" class="w-full py-3.5 rounded-xl font-bold text-white bg-gradient-to-r from-emerald-500 to-teal-600">Ойлголоо</button>
         </div>
+    </div>
 
-        <!-- DJI Air 2S Drone Visual Illustration -->
-        <div class="drone-visual">
-            <svg viewBox="0 0 200 200" width="100%" height="100%" fill="none" stroke="#38bdf8" stroke-width="2">
-                <rect x="70" y="70" width="60" height="60" rx="10" fill="#161b22" stroke="#d97706"/>
-                <circle cx="100" cy="100" r="15" fill="#38bdf8"/>
-                <line x1="70" y1="70" x2="30" y2="30" stroke-width="3"/>
-                <line x1="130" y1="70" x2="170" y2="30" stroke-width="3"/>
-                <line x1="70" y1="130" x2="30" y2="170" stroke-width="3"/>
-                <line x1="130" y1="130" x2="170" y2="170" stroke-width="3"/>
-                <circle cx="30" cy="30" r="12" fill="#1f2937"/>
-                <circle cx="170" cy="30" r="12" fill="#1f2937"/>
-                <circle cx="30" cy="170" r="12" fill="#1f2937"/>
-                <circle cx="170" cy="170" r="12" fill="#1f2937"/>
-            </svg>
-        </div>
-    </section>
-
-    <!-- Services Section with Appropriate Images & Visuals -->
-    <section id="services" class="section">
-        <h2 class="section-title" contenteditable="false" data-editable="section-title-1">Тохирох агаарын шийдэл</h2>
-        <div class="grid">
-            <div class="card">
-                <div style="width:100%; height:180px; background:#1f2937; border-radius:6px; display:flex; align-items:center; justify-content:center; color:#38bdf8; font-weight:bold;">
-                    🏢 Үл хөдлөх хөрөнгө
-                </div>
-                <h3 contenteditable="false" data-editable="service-1-title">01. Үл хөдлөх хөрөнгийн зар</h3>
-                <p contenteditable="false" data-editable="service-1-desc">Байшин, орон сууц, газар худалдах/түрээслэх зарын хувьд объектыг агаараас болон эргэн тойрны орчинг харуулсан зураг, видео бэлтгэнэ.</p>
-            </div>
-            <div class="card">
-                <div style="width:100%; height:180px; background:#1f2937; border-radius:6px; display:flex; align-items:center; justify-content:center; color:#d97706; font-weight:bold;">
-                    🏗️ Барилгын явц
-                </div>
-                <h3 contenteditable="false" data-editable="service-2-title">02. Барилгын явц</h3>
-                <p contenteditable="false" data-editable="service-2-desc">Барилгын ажлын явцыг үе шаттайгаар агаараас баримтжуулж, тайлан хэлбэрээр хүргэнэ.</p>
-            </div>
-            <div class="card">
-                <div style="width:100%; height:180px; background:#1f2937; border-radius:6px; display:flex; align-items:center; justify-content:center; color:#10b981; font-weight:bold;">
-                    🎉 Арга хэмжээ
-                </div>
-                <h3 contenteditable="false" data-editable="service-3-title">03. Арга хэмжээ</h3>
-                <p contenteditable="false" data-editable="service-3-desc">Хурим, фестиваль, спортын арга хэмжээ болон томоохон цугларалтыг агаарын өнцгөөс гайхалтайгаар бичнэ.</p>
-            </div>
-        </div>
-    </section>
-
+    <!-- JavaScript Logic -->
     <script>
-        // Mobile Menu Setup
-        function toggleMenu() {
-            const nav = document.getElementById('navLinks');
-            nav.classList.toggle('active');
-        }
-
-        // In-browser Edit Mode functionality without touching code
-        let isEditing = false;
-        function toggleEditMode() {
-            isEditing = !isEditing;
-            const editables = document.querySelectorAll('[contenteditable]');
-            const toggleBtn = document.getElementById('editToggleBtn');
-            const saveBtn = document.getElementById('saveBtn');
-            const status = document.getElementById('editStatus');
-
-            editables.forEach(el => {
-                el.setAttribute('contenteditable', isEditing ? 'true' : 'false');
-            });
-
-            if (isEditing) {
-                toggleBtn.textContent = "❌ Больих";
-                saveBtn.style.display = "inline-block";
-                status.textContent = "Горим: Засварлаж байна (Текст дээр дарж өөрчил)";
-                alert("Та одоо вэбсайт дээрх хүссэн текстэн дээрээ дарж шууд шинээр бичих боломжтой боллоо!");
+        // Toggle Mobile Menu
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            const icon = document.getElementById('menuIcon');
+            menu.classList.toggle('hidden');
+            if(menu.classList.contains('hidden')) {
+                icon.className = "fa-solid fa-bars";
             } else {
-                toggleBtn.textContent = "✏️ Засах горим";
-                saveBtn.style.display = "none";
-                status.textContent = "Горим: Үзэх";
+                icon.className = "fa-solid fa-xmark";
             }
         }
 
-        function saveChanges() {
-            alert("Өөрчлөлтүүд амжилттай хадгалагдлаа!");
-            toggleEditMode();
+        // Filter Portfolio Items
+        function filterPortfolio(category) {
+            const items = document.querySelectorAll('.portfolio-item');
+            const buttons = ['all', 'realestate', 'construction', 'nature'];
+            
+            buttons.forEach(btn => {
+                const b = document.getElementById('btn-' + btn);
+                if (b) {
+                    if (btn === category) {
+                        b.className = "px-5 py-2.5 rounded-xl text-xs font-bold transition-all bg-sky-500 text-white shadow-lg";
+                    } else {
+                        b.className = "px-5 py-2.5 rounded-xl text-xs font-bold transition-all text-gray-400 hover:text-white";
+                    }
+                }
+            });
+
+            items.forEach(item => {
+                if (category === 'all' || item.getAttribute('data-category') === category) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+        // Portfolio Detail Modal
+        function openPortfolioModal(title, desc, imgUrl, category) {
+            document.getElementById('modalTitle').innerText = title;
+            document.getElementById('modalDesc').innerText = desc;
+            document.getElementById('modalImg').src = imgUrl;
+            document.getElementById('modalCategory').innerText = category;
+            document.getElementById('portfolioModal').classList.remove('hidden');
+        }
+
+        function closePortfolioModal() {
+            document.getElementById('portfolioModal').classList.add('hidden');
+        }
+
+        // Handle Booking Submission
+        function handleBooking(event) {
+            event.preventDefault();
+            const name = document.getElementById('clientName').value;
+            const phone = document.getElementById('clientPhone').value;
+            
+            if(!name || !phone) return;
+
+            // Show success modal
+            document.getElementById('successModal').classList.remove('hidden');
+            event.target.reset();
+        }
+
+        function closeSuccessModal() {
+            document.getElementById('successModal').classList.add('hidden');
         }
     </script>
 </body>
